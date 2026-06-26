@@ -1,0 +1,20 @@
+{
+  "name": "rubyonrails-superpowers",
+  "description": "Skills for Ruby on Rails development",
+  "owner": {
+    "name": "Thomas Schrader",
+    "email": "thomas@railslove.com"
+  },
+  "plugins": [
+    {
+      "name": "rubyonrails-superpowers",
+      "description": "Skills for Ruby on Rails development: service objects, and more.",
+      "version": "1.0.0",
+      "source": "./",
+      "author": {
+        "name": "Thomas Schrader",
+        "email": "thomas@railslove.com"
+      }
+    }
+  ]
+}
