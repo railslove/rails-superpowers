@@ -18,6 +18,29 @@ Models hold persistence, validations, associations, and simple derived attribute
 
 Rule of thumb: if a model method's implementation needs to know about a *different* domain concept (payments, mailers, external APIs), it doesn't belong on the model.
 
+## Non-Database-Backed Models Are Fine
+
+Not every model needs a table. When data has validations, attributes, and a natural name but no persistence (a multi-step form, an API request payload, a search filter set), model it with `ActiveModel::Model` / `ActiveModel::Attributes` instead of bolting attributes onto a controller or stretching an AR model to cover a shape it doesn't persist.
+
+```ruby
+# app/models/contact_form.rb
+# frozen_string_literal: true
+
+class ContactForm
+  include ActiveModel::Model
+  include ActiveModel::Attributes
+
+  attribute :name, :string
+  attribute :email, :string
+  attribute :message, :string
+
+  validates :name, :email, :message, presence: true
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
+end
+```
+
+This gets you the same validation/error API as an ActiveRecord model (`valid?`, `errors`, form builder compatibility) without a migration. Don't reach for a hash and manual checks in a controller or service just because the data isn't going in a table.
+
 ## Callbacks: Normalization Only
 
 Callbacks are allowed **only** for in-model data normalization — no cross-model or external effects.
