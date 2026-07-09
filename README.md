@@ -4,7 +4,23 @@ Claude Code plugin: Ruby on Rails skills covering anti-patterns to avoid, patter
 
 ## Install
 
+### Claude Code
+
 Add via a marketplace pointing at this repo's `.claude-plugin/marketplace.json`, then enable the `rubyonrails-superpowers` plugin.
+
+### OpenCode
+
+Add to the `plugin` array in your `opencode.json` (global or project-level):
+
+```json
+{
+  "plugin": ["rails-superpowers@git+https://github.com/railslove/rails-superpowers.git"]
+}
+```
+
+Restart OpenCode. The plugin installs through OpenCode's plugin manager and registers all skills automatically — no symlinks or manual copying.
+
+Verify by asking: "list your rails skills"
 
 ## Skills
 
