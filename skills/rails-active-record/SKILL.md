@@ -1,0 +1,116 @@
+---
+name: rails-active-record
+description: Use when writing or reviewing ActiveRecord models, adding callbacks, fixing N+1 queries, or extracting shared model behavior into concerns. Triggers on "N+1", "includes", "preload", "callback", "before_save", "after_commit", "concern", or any change to app/models/. Always invoke before touching a file in app/models/.
+---
+
+# Rails ActiveRecord Conventions
+
+Models persist and validate data. Business logic, cross-model side effects, and query optimization live elsewhere.
+
+## No Business Logic in Models
+
+Models hold persistence, validations, associations, and simple derived attributes. Anything else — external API calls, sending emails, multi-model orchestration — belongs in a service object.
+
+| Wrong                                          | Right                                                |
+| ----------------------------------------------- | ----------------------------------------------------- |
+| `user.register!` sends welcome email internally | `RegisterUser.call` sends the email, model just saves |
+| `Order#charge_card` calls the payment gateway    | `ChargeOrder.call` calls the gateway                  |
+
+Rule of thumb: if a model method's implementation needs to know about a *different* domain concept (payments, mailers, external APIs), it doesn't belong on the model.
+
+## Callbacks: Normalization Only
+
+Callbacks are allowed **only** for in-model data normalization — no cross-model or external effects.
+
+```ruby
+# Right — pure data normalization, no side effects
+before_validation { self.email = email.strip.downcase if email }
+
+# Wrong — side effect (external call, other models) hidden in a callback
+after_create { NotifyMailer.welcome(self).deliver_later }
+after_commit { Analytics.track("user_created", user: self) }
+```
+
+For side effects (notifications, analytics, syncing other models), publish an event instead of hooking a callback:
+
+```ruby
+# app/models/user.rb
+after_create { ActiveSupport::Notifications.instrument("user.created", user_id: id) }
+
+# app/subscribers/user_created_subscriber.rb (or an initializer)
+ActiveSupport::Notifications.subscribe("user.created") do |*, payload|
+  SendWelcomeEmail.call(user_id: payload[:user_id])
+end
+```
+
+This keeps the model ignorant of *who* reacts to the event — subscribers can be added or removed without touching the model.
+
+## Fixing N+1 Queries
+
+Three approved tools, in order of preference:
+
+1. **`includes`/`preload` at the call site** — the controller (or service) knows what it needs to render/return:
+   ```ruby
+   @posts = Post.includes(:author, :comments).where(published: true)
+   ```
+2. **Named scopes on the model** for reusable eager-loading combined with filtering:
+   ```ruby
+   scope :with_comments, -> { includes(:comments) }
+   ```
+3. **Query objects** when the query is complex enough to need its own tests (multiple joins, conditional filters, reporting queries):
+   ```ruby
+   # app/queries/published_posts_query.rb
+   # frozen_string_literal: true
+
+   class PublishedPostsQuery
+     def self.call(...) = new(...).call
+
+     def initialize(author: nil)
+       @author = author
+     end
+
+     def call
+       scope = Post.includes(:author, :comments).where(published: true)
+       scope = scope.where(author: author) if author
+       scope
+     end
+
+     private
+
+     attr_reader :author
+   end
+   ```
+
+Never eager-load "just in case" — every `includes` should map to an actual access pattern used later. Use the Bullet gem in development to catch missed cases; don't rely on manual review alone.
+
+## Concerns: Shared Behavior Only
+
+A `Concern` module is for behavior **shared across multiple models**. If only one model uses it, it's just an unextracted chunk of that model — inline it instead.
+
+```ruby
+# Right — Sluggable is mixed into Post, Category, and Page
+module Sluggable
+  extend ActiveSupport::Concern
+  included { before_validation :generate_slug }
+  ...
+end
+
+# Wrong — a concern that exists only to shrink one model's file
+module UserHelperMethods # only User includes this
+  ...
+end
+```
+
+## Validation Conventions
+
+- Prefer built-in validators (`presence`, `uniqueness`, `format`, `numericality`) over custom code.
+- Custom validators live in `app/validators/`, named `<Thing>Validator`, subclassing `ActiveModel::EachValidator`.
+- Error messages go through i18n (`config/locales/*.yml`), never hardcoded strings in the validator or model — this matches how the existing `rails-service-objects` skill expects error messages to surface to callers/users.
+
+## Reviewing Existing Models
+
+1. **Any method calling out to mailers, external APIs, or other domains?** → extract to a service.
+2. **Any callback with a side effect beyond normalizing an attribute?** → replace with `ActiveSupport::Notifications` or move the call into the service that mutates the record.
+3. **Any `includes`/`preload` missing where an association is accessed in a loop?** → N+1.
+4. **Any concern included by exactly one model?** → inline it.
+5. **Any hardcoded error string in a validator?** → move to i18n.

@@ -8,8 +8,8 @@
   "plugins": [
     {
       "name": "rubyonrails-superpowers",
-      "description": "Skills for Ruby on Rails development: service objects, and more.",
-      "version": "1.0.0",
+      "description": "Skills for Ruby on Rails development: service objects, models, controllers, ViewComponent/Hotwire, background jobs, RSpec.",
+      "version": "1.1.0",
       "source": "./",
       "author": {
         "name": "Thomas Schrader",

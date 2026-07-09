@@ -1,7 +1,7 @@
 {
   "name": "rubyonrails-superpowers",
-  "description": "Skills for Ruby on Rails development: service objects, and more.",
-  "version": "1.0.0",
+  "description": "Skills for Ruby on Rails development: service objects, models, controllers, ViewComponent/Hotwire, background jobs, RSpec.",
+  "version": "1.1.0",
   "author": {
     "name": "Thomas Schrader",
     "url": "https://github.com/endverbraucher"
@@ -9,5 +9,5 @@
   "homepage": "https://github.com/endverbraucher/rails-superpowers",
   "repository": "https://github.com/endverbraucher/rails-superpowers",
   "license": "MIT",
-  "keywords": ["rails", "ruby", "service-objects", "best-practices"]
+  "keywords": ["rails", "ruby", "service-objects", "activerecord", "viewcomponent", "hotwire", "sidekiq", "rspec", "best-practices"]
 }
