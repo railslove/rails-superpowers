@@ -6,8 +6,8 @@
     "name": "Thomas Schrader",
     "url": "https://github.com/endverbraucher"
   },
-  "homepage": "https://github.com/endverbraucher/rails-superpowers",
-  "repository": "https://github.com/endverbraucher/rails-superpowers",
+  "homepage": "https://github.com/railslove/rails-superpowers",
+  "repository": "https://github.com/railslove/rails-superpowers",
   "license": "MIT",
   "keywords": ["rails", "ruby", "service-objects", "activerecord", "viewcomponent", "hotwire", "sidekiq", "rspec", "best-practices"]
 }
