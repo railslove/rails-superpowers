@@ -1,6 +1,6 @@
 {
   "name": "rubyonrails-superpowers",
-  "description": "Skills for Ruby on Rails development: service objects, models, controllers, ViewComponent/Hotwire, background jobs, RSpec.",
+  "description": "Ruby on Rails skills covering anti-patterns to avoid, patterns to embrace, and Railslove's house conventions.",
   "version": "1.1.0",
   "author": {
     "name": "Thomas Schrader",

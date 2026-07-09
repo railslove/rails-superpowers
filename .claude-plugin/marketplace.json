@@ -1,6 +1,6 @@
 {
   "name": "rubyonrails-superpowers",
-  "description": "Skills for Ruby on Rails development",
+  "description": "Ruby on Rails skills covering anti-patterns to avoid, patterns to embrace, and Railslove's house conventions.",
   "owner": {
     "name": "Thomas Schrader",
     "email": "thomas@railslove.com"
