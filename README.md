@@ -6,7 +6,33 @@ Claude Code plugin: Ruby on Rails skills covering anti-patterns to avoid, patter
 
 ### Claude Code
 
-Add via a marketplace pointing at this repo's `.claude-plugin/marketplace.json`, then enable the `rubyonrails-superpowers` plugin.
+1. Add this repo as a marketplace:
+   ```
+   /plugin marketplace add railslove/rails-superpowers
+   ```
+2. Install the plugin from it (marketplace name and plugin name are both `rubyonrails-superpowers`):
+   ```
+   /plugin install rubyonrails-superpowers@rubyonrails-superpowers
+   ```
+3. Reload, then verify:
+   ```
+   /reload-plugins
+   /plugin list
+   ```
+
+To auto-enable this for your whole team without manual steps, add to the project's `.claude/settings.json`:
+```json
+{
+  "extraKnownMarketplaces": {
+    "rubyonrails-superpowers": {
+      "source": { "source": "github", "repo": "railslove/rails-superpowers" }
+    }
+  },
+  "enabledPlugins": {
+    "rubyonrails-superpowers@rubyonrails-superpowers": true
+  }
+}
+```
 
 ### OpenCode
 
