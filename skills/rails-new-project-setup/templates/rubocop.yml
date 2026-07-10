@@ -1,0 +1,31 @@
+require:
+  - standard
+
+plugins:
+  - rubocop-rails
+
+inherit_gem:
+  standard: config/base.yml
+
+inherit_mode:
+  merge:
+    - Exclude
+
+AllCops:
+  SuggestExtensions: false
+  Exclude:
+    - db/**/*
+    - bin/*
+    - tmp/**/*
+    - vendor/**/*
+    - lib/tasks/**/*
+  NewCops: disable
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: true
+
+Rails/UnknownEnv:
+  Environments:
+    - production
+    - development
+    - test
