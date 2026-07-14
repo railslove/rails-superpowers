@@ -1,6 +1,6 @@
 ---
 name: rails-active-record
-description: Use when writing or reviewing ActiveRecord models, adding callbacks, fixing N+1 queries, or extracting shared model behavior into concerns. Triggers on "N+1", "includes", "preload", "callback", "before_save", "after_commit", "concern", or any change to app/models/. Always invoke before touching a file in app/models/.
+description: Use when writing or reviewing ActiveRecord models, adding callbacks, fixing N+1 queries, extracting shared model behavior into concerns, or implementing soft deletion. Triggers on "N+1", "includes", "preload", "callback", "before_save", "after_commit", "concern", "default_scope", "soft delete", "discard", or any change to app/models/. Always invoke before touching a file in app/models/.
 ---
 
 # Rails ActiveRecord Conventions
@@ -106,6 +106,57 @@ Three approved tools, in order of preference:
 
 Never eager-load "just in case" — every `includes` should map to an actual access pattern used later. Use the Bullet gem in development to catch missed cases; don't rely on manual review alone.
 
+## Never Change `default_scope`
+
+Don't touch `default_scope` on a model. It applies silently to every query against the model — including joins, associations, and `unscoped` callers who forgot to say so — and it's the source of some of the worst Rails footguns: records that mysteriously vanish from `count`, associations that silently exclude rows, admin screens that can't find "deleted" data without `.unscoped`.
+
+The classic anti-pattern this rule exists to kill:
+
+```ruby
+# Wrong — soft deletion via default_scope
+class User < ApplicationRecord
+  default_scope { where(deleted_at: nil) }
+end
+```
+
+This looks convenient, then breaks joins (`Company.joins(:users)` silently drops companies whose only users are soft-deleted), breaks `validates :email, uniqueness: true` (uniqueness checks run against the scoped table, so a "deleted" email blocks a new signup), and forces every legitimate "show deleted records" code path to remember `.unscoped`, which is easy to forget and hard to grep for.
+
+If a model needs a default filter, use an explicit named scope instead and require callers to opt in:
+
+```ruby
+scope :active, -> { where(deleted_at: nil) }
+```
+
+## Soft Deletion: Use the `discard` Gem
+
+Don't hand-roll soft deletion (a `deleted_at` column plus a `default_scope`, or a `deleted` boolean plus ad-hoc `where` clauses scattered across the app). Use the [`discard`](https://github.com/jhawthorn/discard) gem.
+
+```ruby
+# Gemfile
+gem "discard", "~> 1.4"
+
+# app/models/user.rb
+class User < ApplicationRecord
+  include Discard::Model
+end
+```
+
+```ruby
+user.discard          # sets discarded_at, does not delete the row
+user.discarded?       # true
+user.undiscard        # clears discarded_at
+
+User.kept             # where(discarded_at: nil) — the default query scope in views/controllers
+User.discarded         # where.not(discarded_at: nil)
+User.with_discarded    # everything, explicit opt-in
+```
+
+Why this over hand-rolled soft delete:
+
+- No `default_scope` — `kept`/`discarded`/`with_discarded` are explicit scopes, so every call site says what it means instead of relying on implicit global filtering.
+- Associations that need to exclude discarded records declare it explicitly (`has_many :comments, -> { kept }`), rather than inheriting a silent global filter.
+- Migration is a single `discarded_at:datetime` column (`rails g migration AddDiscardedAtToUsers discarded_at:datetime:index`).
+
 ## Concerns: Shared Behavior Only
 
 A `Concern` module is for behavior **shared across multiple models**. If only one model uses it, it's just an unextracted chunk of that model — inline it instead.
@@ -137,3 +188,5 @@ end
 3. **Any `includes`/`preload` missing where an association is accessed in a loop?** → N+1.
 4. **Any concern included by exactly one model?** → inline it.
 5. **Any hardcoded error string in a validator?** → move to i18n.
+6. **Any `default_scope` on the model?** → remove it, replace with an explicit named scope.
+7. **Any hand-rolled soft deletion (`deleted_at`/`deleted` column with manual `where` clauses)?** → replace with the `discard` gem.
