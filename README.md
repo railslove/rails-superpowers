@@ -60,6 +60,7 @@ Verify by asking: "list your rails skills"
 | `rails-rspec-testing` | Request/system/unit specs, mocking, time-based flakiness |
 | `rails-view-components` | ViewComponent structure, partial vs. component, Hotwire (Turbo/Stimulus) |
 | `rails-new-project-setup` | Bootstraps a new Rails app (or aligns an existing one) with house gems, `.rubocop.yml`, and CI workflow |
+| `rails-naming-conventions` | What makes a name good — saying what a thing is/does, avoiding catch-all words like `Manager`/`Helper`, one concept per name |
 
 Each skill auto-triggers on relevant file changes (e.g. `app/models/**` invokes `rails-active-record`) so conventions get applied without remembering to ask. `rails-new-project-setup` instead triggers on project bootstrap moments — "new Rails app", "set up this project", "align with our conventions" — since there's no file change to key off yet.
 
