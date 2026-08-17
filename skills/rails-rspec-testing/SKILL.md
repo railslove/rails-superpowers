@@ -43,11 +43,11 @@ If setting up real collaborators is painful, that's a signal the collaborator ne
 
 ## Request vs. System vs. Unit Specs
 
-| Spec type   | Use for                                                              |
-| ----------- | --------------------------------------------------------------------- |
-| Unit        | Service objects, models, query objects, jobs — the default, fastest |
-| Request     | Controller behavior: status codes, redirects, JSON shape             |
-| System      | A full user flow through the browser (JS, multiple pages) — expensive, use sparingly |
+| Spec type | Use for                                                                              |
+| --------- | ------------------------------------------------------------------------------------ |
+| Unit      | Service objects, models, query objects, jobs — the default, fastest                  |
+| Request   | Controller behavior: status codes, redirects, JSON shape                             |
+| System    | A full user flow through the browser (JS, multiple pages) — expensive, use sparingly |
 
 Default to unit specs for anything with a `.call`. Reach for a request spec only to verify the controller wiring (params → service → response), not to re-test the service's branches — those belong in the service's own unit spec, per `rails-service-objects`. Reach for a system spec only when the behavior genuinely spans multiple pages or requires JS (Turbo/Stimulus interaction) — not as a default "test it end-to-end" habit.
 
