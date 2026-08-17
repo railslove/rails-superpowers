@@ -1,10 +1,20 @@
 {
   "name": "rails-superpowers",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "Ruby on Rails skills covering anti-patterns to avoid, patterns to embrace, and Railslove's house conventions.",
   "type": "module",
   "main": ".opencode/plugins/rails-superpowers.js",
   "license": "MIT",
   "repository": "https://github.com/railslove/rails-superpowers",
-  "keywords": ["rails", "ruby", "service-objects", "activerecord", "viewcomponent", "hotwire", "sidekiq", "rspec", "best-practices"]
+  "keywords": [
+    "rails",
+    "ruby",
+    "service-objects",
+    "activerecord",
+    "viewcomponent",
+    "hotwire",
+    "sidekiq",
+    "rspec",
+    "best-practices"
+  ]
 }

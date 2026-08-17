@@ -1,7 +1,7 @@
 {
   "name": "rubyonrails-superpowers",
   "description": "Ruby on Rails skills covering anti-patterns to avoid, patterns to embrace, and Railslove's house conventions.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": {
     "name": "Thomas Schrader",
     "url": "https://github.com/endverbraucher"
