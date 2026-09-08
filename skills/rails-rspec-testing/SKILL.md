@@ -1,6 +1,6 @@
 ---
 name: rails-rspec-testing
-description: Use when writing or reviewing RSpec specs, choosing between request/system/unit specs, mocking a dependency, or dealing with a flaky or time-dependent test. Triggers on "RSpec", "flaky test", "spec fails intermittently", "mock", "stub", "Timecop", "travel_to", or any file under spec/. Always invoke before writing a new spec file.
+description: Use when writing or reviewing RSpec specs, choosing between request/system/unit specs, mocking a dependency, testing a private method, or dealing with a flaky or time-dependent test. Triggers on "RSpec", "flaky test", "spec fails intermittently", "mock", "stub", "Timecop", "travel_to", "send", "private method", or any file under spec/. Always invoke before writing a new spec file.
 ---
 
 # Rails RSpec Conventions
@@ -41,6 +41,25 @@ allow(StripeClient).to receive(:charge).and_return(success_response)
 
 If setting up real collaborators is painful, that's a signal the collaborator needs a better factory or the code needs restructuring — not a signal to mock it away.
 
+## No Testing Private Methods via `send`
+
+Never call a private method directly with `send` to test it in isolation — that binds the spec to implementation details instead of behavior, and breaks the moment the method is renamed, inlined, or refactored, even if behavior didn't change.
+
+```ruby
+# Wrong — reaches around encapsulation
+it "calculates the discount" do
+  expect(order.send(:apply_discount, 100)).to eq(90)
+end
+
+# Right — assert through the public method that uses it
+it "applies a 10% discount to the total" do
+  order = create(:order, subtotal: 100)
+  expect(order.total).to eq(90)
+end
+```
+
+If a private method is complex enough that you want to test it directly, that's a signal it doesn't belong as a private method on this class — extract it into its own collaborator with a public API (see `rails-service-objects`), then test that collaborator directly instead of reaching for `send`.
+
 ## Request vs. System vs. Unit Specs
 
 | Spec type | Use for                                                                              |
@@ -63,3 +82,4 @@ Default to unit specs for anything with a `.call`. Reach for a request spec only
 2. **Any `allow(...).to receive` on an internal model or service?** → replace with the real collaborator.
 3. **Request spec re-testing service branch logic already covered by the service's unit spec?** → trim to wiring-only assertions.
 4. **Factory with default associations nobody asked for?** → make them explicit at the call site.
+5. **Any `.send(:private_method, ...)` in a spec?** → assert through the public method instead, or extract the private method into its own collaborator if it's complex enough to warrant direct testing.
