@@ -4,6 +4,9 @@
   "description": "Ruby on Rails skills covering anti-patterns to avoid, patterns to embrace, and Railslove's house conventions.",
   "type": "module",
   "main": ".opencode/plugins/rails-superpowers.js",
+  "scripts": {
+    "version": "node scripts/sync-plugin-version.mjs"
+  },
   "license": "MIT",
   "repository": "https://github.com/railslove/rails-superpowers",
   "keywords": [

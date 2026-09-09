@@ -87,6 +87,20 @@ What it does, in order:
 
 Requires a `Gemfile` at the project root — it refuses to run (and won't create one) on a non-Rails directory. Full details: [`skills/rails-new-project-setup/SKILL.md`](skills/rails-new-project-setup/SKILL.md).
 
+## Releasing
+
+Version numbers live in three places (`package.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`) and must stay in sync. Don't hand-edit them — bump with:
+
+```
+npm version patch   # or: minor | major | <explicit semver>
+```
+
+This updates `package.json`, runs `scripts/sync-plugin-version.mjs` to mirror the new version into `plugin.json` and `marketplace.json`, and commits + tags all three files together. Push both the commit and the tag when ready:
+
+```
+git push && git push --tags
+```
+
 ## License
 
 MIT
