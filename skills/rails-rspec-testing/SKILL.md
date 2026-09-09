@@ -75,6 +75,25 @@ Default to unit specs for anything with a `.call`. Reach for a request spec only
 - No default associations on a factory unless every use needs them — build associations explicitly per example via traits, so a spec's setup states what it actually depends on.
 - Traits over conditional factory logic (`trait :admin { role { "admin" } }`, not an `if` inside the factory block).
 - No fixtures — FactoryBot only.
+- Build the state an example needs through factory attributes, not by mutating a record after it's created. Calling `update`/`update!` on a `create`d or shared `let` record to force it into the state under test skips model callbacks/validations differently than a fresh insert would and hides the example's actual setup behind a mutation instead of stating it up front.
+
+```ruby
+# Wrong — mutates a shared record into the state under test
+let(:subscription) { create(:subscription) }
+
+it "returns true when trial_ends_at is in the past" do
+  subscription.update!(trial_ends_at: 1.day.ago)
+  expect(subscription.trial_expired?).to eq(true)
+end
+
+# Right — state is explicit in the factory call for this example
+it "returns true when trial_ends_at is in the past" do
+  subscription = create(:subscription, trial_ends_at: 1.day.ago)
+  expect(subscription.trial_expired?).to eq(true)
+end
+```
+
+If several examples in the same `describe` need different states of the same record, give each its own local `create(:factory, attribute: value)` rather than sharing one `let` and updating it per example.
 
 ## Reviewing Existing Specs
 
@@ -83,3 +102,4 @@ Default to unit specs for anything with a `.call`. Reach for a request spec only
 3. **Request spec re-testing service branch logic already covered by the service's unit spec?** → trim to wiring-only assertions.
 4. **Factory with default associations nobody asked for?** → make them explicit at the call site.
 5. **Any `.send(:private_method, ...)` in a spec?** → assert through the public method instead, or extract the private method into its own collaborator if it's complex enough to warrant direct testing.
+6. **`record.update`/`update!` on a `create`d or shared `let` record to force it into the state under test?** → pass the attribute directly to `create`/`build` instead.
