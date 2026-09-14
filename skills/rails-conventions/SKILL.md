@@ -37,6 +37,43 @@ git diff --cached -- '*.rb' | grep -nE 'binding\.(pry|irb)|byebug|debugger|^\+.*
 
 `binding.pry`, `byebug`, stray `puts`, and commented-out old code are all signs a change was tested interactively but not cleaned up. Remove them rather than leaving them commented out "just in case."
 
+## No Commit-Message Comments
+
+A comment that narrates the change — what was added, fixed, or changed, or why *this task* needed it — belongs in the commit message, not the code. It rots the moment the code moves again, and it tells a future reader nothing the diff didn't already say.
+
+```ruby
+# Wrong — narrates the change/task, will be stale after the next edit
+# Added retry logic to fix flaky webhook delivery (see #482)
+def deliver
+  retries = 0
+  ...
+end
+
+# Wrong — states what the code obviously does
+# Loop through users and send emails
+users.each { |u| UserMailer.welcome(u).deliver_later }
+
+# Right — no comment; names already say what/who
+def deliver_with_retry
+  ...
+end
+
+# Right — a comment only when the WHY is non-obvious and durable
+# Retries because the webhook host rate-limits bursts >5/s; a flat sleep
+# is simpler than backoff for this low-volume endpoint.
+def deliver
+  ...
+end
+```
+
+Before calling a change done, scan the diff for the tells — past-tense verbs, ticket/issue references, and "this handles/fixes/now" phrasing:
+
+```bash
+git diff --cached -- '*.rb' | grep -nE '^\+\s*#.*\b([Aa]dded?|[Ff]ixed?|[Cc]hanged?|[Uu]pdated?|[Rr]emoved?|[Nn]ow (we|handles?)|[Tt]his (handles|fixes|adds))\b'
+```
+
+A hit isn't automatically wrong — but treat it as a prompt to ask: does this explain a non-obvious *why*, or does it just restate the diff? If it's the latter, delete it; the reasoning belongs in the commit message or PR description instead.
+
 ## Tests Green
 
 Run the specs touching the files you changed (see `rails-rspec-testing` for how to pick the right spec type) before saying a change is complete. Don't rely on having read the code carefully instead of running it — Rails has enough implicit behavior (callbacks, validations, autoloading) that reading isn't a substitute for running.
@@ -67,5 +104,6 @@ end
 
 1. **`bin/rubocop` clean on touched files?**
 2. **Any `binding.pry`, `byebug`, or stray `puts` left in the diff?**
-3. **Do the relevant specs pass?**
-4. **If a migration was added, is it reversible or does it have an explicit `down`?**
+3. **Any comments that just narrate the change instead of explaining a non-obvious why?**
+4. **Do the relevant specs pass?**
+5. **If a migration was added, is it reversible or does it have an explicit `down`?**
