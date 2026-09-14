@@ -9,6 +9,16 @@ Entries are generated from [Conventional Commits](https://www.conventionalcommit
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-14
+
+### Added
+
+- Auto-generate CHANGELOG.md from Conventional Commits at release time
+
+### Changed
+
+- Require Conventional Commits and document the release flow
+
 ## [1.2.3] - 2026-09-14
 
 ### Changed
@@ -29,6 +39,7 @@ Entries are generated from [Conventional Commits](https://www.conventionalcommit
 
 - `rails-rspec-testing`: recommend clean factories over mutating existing records in specs, so `build_stubbed` stays usable and context can't leak between examples.
 
-[Unreleased]: https://github.com/railslove/rails-superpowers/compare/v1.2.3...HEAD
+[Unreleased]: https://github.com/railslove/rails-superpowers/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/railslove/rails-superpowers/compare/v1.2.3...v1.3.0
 [1.2.3]: https://github.com/railslove/rails-superpowers/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/railslove/rails-superpowers/releases/tag/v1.2.2
