@@ -89,13 +89,15 @@ Requires a `Gemfile` at the project root — it refuses to run (and won't create
 
 ## Releasing
 
+Commits must follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (`type(scope): description`) — see [`AGENTS.md`](AGENTS.md) for the type-to-changelog mapping. [`CHANGELOG.md`](CHANGELOG.md) is generated from these commit subjects, not hand-edited.
+
 Version numbers live in three places (`package.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`) and must stay in sync. Don't hand-edit them — bump with:
 
 ```
 npm version patch   # or: minor | major | <explicit semver>
 ```
 
-This updates `package.json`, runs `scripts/sync-plugin-version.mjs` to mirror the new version into `plugin.json` and `marketplace.json`, and commits + tags all three files together. Push both the commit and the tag when ready:
+This updates `package.json`, runs `scripts/sync-plugin-version.mjs` to mirror the new version into `plugin.json` and `marketplace.json`, greps the commits since the last tag for a `CHANGELOG.md` entry (failing if none are Conventional Commits — nothing user-facing to release), and commits + tags all four files together. Push both the commit and the tag when ready:
 
 ```
 git push && git push --tags
