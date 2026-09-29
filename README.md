@@ -94,6 +94,25 @@ What it does, in order:
 
 Requires a `Gemfile` at the project root — it refuses to run (and won't create one) on a non-Rails directory. Full details: [`skills/rails-new-project-setup/SKILL.md`](skills/rails-new-project-setup/SKILL.md).
 
+## Evals
+
+`evals/` holds a [`claude plugin eval`](https://code.claude.com/docs/en/plugin-evals) suite that measures whether the skills actually fire when an agent writes Rails code, and whether the result follows house conventions. Each case pairs a realistic prompt, which never names a skill, with a small Rails fixture app built by `fixture.sh` (shared skeleton in `evals/_shared/rails_app.sh`). It has two kinds of graders:
+
+- **`*-fired`** (`tool_used: Skill`): did the expected skill trigger? Reported as a with-plugin indicator, not scored against the baseline.
+- **Convention checks** (`regex` / `file_exists`): e.g. the job's `perform` takes an ID, the archive action is its own resource rather than a `member` route, the spec uses `travel_to`. Scored in both arms, so `Δ` shows what the plugin changes.
+
+`negative-non-rails` asserts that no `rails-*` skill fires on a non-Rails prompt.
+
+Run the full suite from the repo root:
+
+```
+claude plugin eval . --scaffold --allow-tools Edit Write --threshold 0.8
+```
+
+`--scaffold` runs the fixture scripts (they only write files into the run's empty workspace), and `Edit`/`Write` let the agent change the fixture, which is what exercises `paths:` and the reminder hook. A full run is 8 cases × 3 runs × 2 arms. While iterating, use `--case <name> --runs 1 --ablation none`. Results land in `evals/results/` (gitignored).
+
+When you change a skill's `description` or `paths:`, re-run the suite and compare the `*-fired` rates before and after.
+
 ## Releasing
 
 Commits must follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (`type(scope): description`) — see [`AGENTS.md`](AGENTS.md) for the type-to-changelog mapping. [`CHANGELOG.md`](CHANGELOG.md) is generated from these commit subjects, not hand-edited.
