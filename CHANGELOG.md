@@ -9,6 +9,16 @@ Entries are generated from [Conventional Commits](https://www.conventionalcommit
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-09-29
+
+### Added
+
+- Trigger skills by file path via paths frontmatter and a PreToolUse reminder hook
+
+### Changed
+
+- **BREAKING:** Drop OpenCode plugin support and document skills.sh install
+
 ## [1.3.0] - 2026-09-14
 
 ### Added
@@ -39,7 +49,8 @@ Entries are generated from [Conventional Commits](https://www.conventionalcommit
 
 - `rails-rspec-testing`: recommend clean factories over mutating existing records in specs, so `build_stubbed` stays usable and context can't leak between examples.
 
-[Unreleased]: https://github.com/railslove/rails-superpowers/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/railslove/rails-superpowers/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/railslove/rails-superpowers/compare/v1.3.0...v2.0.0
 [1.3.0]: https://github.com/railslove/rails-superpowers/compare/v1.2.3...v1.3.0
 [1.2.3]: https://github.com/railslove/rails-superpowers/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/railslove/rails-superpowers/releases/tag/v1.2.2
