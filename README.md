@@ -34,19 +34,25 @@ To auto-enable this for your whole team without manual steps, add to the project
 }
 ```
 
-### OpenCode
+### skills.sh CLI
 
-Add to the `plugin` array in your `opencode.json` (global or project-level):
+To install only the skills (no plugin), use the [skills.sh](https://www.skills.sh/docs) CLI:
 
-```json
-{
-  "plugin": ["rails-superpowers@git+https://github.com/railslove/rails-superpowers.git"]
-}
+```
+npx skills add railslove/rails-superpowers -a claude-code
 ```
 
-Restart OpenCode. The plugin installs through OpenCode's plugin manager and registers all skills automatically — no symlinks or manual copying.
+This installs into the current project's `.claude/skills/` and records the source in `skills-lock.json`. Other options:
 
-Verify by asking: "list your rails skills"
+```
+npx skills add railslove/rails-superpowers --list                               # show available skills
+npx skills add railslove/rails-superpowers -a claude-code -s rails-controllers  # install one skill
+npx skills add railslove/rails-superpowers -a claude-code -g                    # install for your user, all projects
+npx skills update                                                               # pull the latest versions
+npx skills remove rails-controllers                                             # uninstall a skill
+```
+
+Installing this way gets the skills and their `paths:` triggers, but not the plugin's reminder hook (`hooks/`), which only ships with the Claude Code plugin. Use the plugin install above when you want the most reliable auto-triggering.
 
 ## Skills
 
@@ -66,8 +72,6 @@ Each skill auto-triggers on relevant file changes (e.g. `app/models/**` invokes 
 
 - **`paths:` frontmatter** — each skill declares the globs it owns, so Claude loads it when working with matching files, even if the prompt never mentions the layer.
 - **`PreToolUse` hook** (`hooks/skill-reminder.mjs`) — before any file edit, it reminds the agent to invoke each skill whose `paths:` match that file and that hasn't been invoked yet this session. It only adds a reminder; it never blocks the edit. The globs are read from the skills' frontmatter, so `paths:` is the single place to change them.
-
-OpenCode doesn't read `paths:` or Claude Code hooks; there, triggering relies on the skill descriptions alone.
 
 `rails-new-project-setup` instead triggers on project bootstrap moments — "new Rails app", "set up this project", "align with our conventions" — since there's no file change to key off yet.
 
