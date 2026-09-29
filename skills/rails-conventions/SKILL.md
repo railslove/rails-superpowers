@@ -1,6 +1,8 @@
 ---
 name: rails-conventions
 description: Use before any commit or PR, and right after editing any Ruby file, to check general project hygiene — rubocop clean, no debug leftovers, tests green, reversible migrations. Triggers on "commit", "PR", "pull request", "ready to merge", "done with this", or any change to a .rb file. Always invoke before telling the user a Ruby change is finished.
+paths:
+  - "**/*.rb"
 ---
 
 # Rails Project Conventions

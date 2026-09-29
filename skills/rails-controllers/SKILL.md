@@ -1,6 +1,9 @@
 ---
 name: rails-controllers
 description: Use when writing or reviewing Rails controller actions, adding a new route, extracting strong params, or deciding whether a controller action needs a new custom route. Triggers on "controller", "strong params", "before_action", "respond_to", or any change to app/controllers/. Always invoke before touching a file in app/controllers/.
+paths:
+  - "app/controllers/**"
+  - "config/routes.rb"
 ---
 
 # Rails Controller Conventions

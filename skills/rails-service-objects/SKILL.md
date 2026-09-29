@@ -1,6 +1,8 @@
 ---
 name: rails-service-objects
 description: Conventions for writing, reviewing, and refactoring Ruby on Rails service objects. Use whenever creating a new service object, extracting business logic from a controller into a service, reviewing or auditing code in app/services/, refactoring an existing service, or any time someone mentions "service object", "service class", or "extract to service". Always invoke before touching any file in app/services/.
+paths:
+  - "app/services/**"
 ---
 
 # Rails Service Object Conventions

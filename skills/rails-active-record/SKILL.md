@@ -1,6 +1,9 @@
 ---
 name: rails-active-record
 description: Use when writing or reviewing ActiveRecord models, adding callbacks, fixing N+1 queries, extracting shared model behavior into concerns, or implementing soft deletion. Triggers on "N+1", "includes", "preload", "callback", "before_save", "after_commit", "concern", "default_scope", "soft delete", "discard", or any change to app/models/. Always invoke before touching a file in app/models/.
+paths:
+  - "app/models/**"
+  - "db/migrate/**"
 ---
 
 # Rails ActiveRecord Conventions

@@ -62,7 +62,14 @@ Verify by asking: "list your rails skills"
 | `rails-new-project-setup` | Bootstraps a new Rails app (or aligns an existing one) with house gems, `.rubocop.yml`, and CI workflow |
 | `rails-naming-conventions` | What makes a name good — saying what a thing is/does, avoiding catch-all words like `Manager`/`Helper`, one concept per name |
 
-Each skill auto-triggers on relevant file changes (e.g. `app/models/**` invokes `rails-active-record`) so conventions get applied without remembering to ask. `rails-new-project-setup` instead triggers on project bootstrap moments — "new Rails app", "set up this project", "align with our conventions" — since there's no file change to key off yet.
+Each skill auto-triggers on relevant file changes (e.g. `app/models/**` invokes `rails-active-record`) so conventions get applied without remembering to ask. Two mechanisms make this reliable in Claude Code:
+
+- **`paths:` frontmatter** — each skill declares the globs it owns, so Claude loads it when working with matching files, even if the prompt never mentions the layer.
+- **`PreToolUse` hook** (`hooks/skill-reminder.mjs`) — before any file edit, it reminds the agent to invoke each skill whose `paths:` match that file and that hasn't been invoked yet this session. It only adds a reminder; it never blocks the edit. The globs are read from the skills' frontmatter, so `paths:` is the single place to change them.
+
+OpenCode doesn't read `paths:` or Claude Code hooks; there, triggering relies on the skill descriptions alone.
+
+`rails-new-project-setup` instead triggers on project bootstrap moments — "new Rails app", "set up this project", "align with our conventions" — since there's no file change to key off yet.
 
 ### Using `rails-new-project-setup`
 

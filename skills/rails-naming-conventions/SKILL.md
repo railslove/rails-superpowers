@@ -1,6 +1,8 @@
 ---
 name: rails-naming-conventions
 description: Guidance for choosing good names for classes, methods, variables, and any other identifier in Ruby/Rails code — judging whether a name actually communicates, not syntax rules. Use whenever creating a new class, module, method, or variable; renaming something; reviewing a PR for naming quality; or when someone asks "what should I call this", "is this a good name", or mentions "naming convention". Always invoke before introducing a new identifier in Ruby code.
+paths:
+  - "**/*.rb"
 ---
 
 # Rails Naming Conventions

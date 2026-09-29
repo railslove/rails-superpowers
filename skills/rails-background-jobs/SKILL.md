@@ -1,6 +1,8 @@
 ---
 name: rails-background-jobs
 description: Use when writing or reviewing an ActiveJob/Sidekiq background job, enqueuing a job with arguments, or deciding what logic belongs in a job versus a service. Triggers on "background job", "ActiveJob", "Sidekiq", "perform_later", "perform_async", or any change to app/jobs/. Always invoke before touching a file in app/jobs/.
+paths:
+  - "app/jobs/**"
 ---
 
 # Rails Background Job Conventions

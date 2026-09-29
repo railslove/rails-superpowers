@@ -1,6 +1,9 @@
 ---
 name: rails-view-components
 description: Use when building or reviewing view-layer code with ViewComponent, deciding whether markup belongs in a partial or a component, or working with Hotwire (Turbo/Stimulus) frontend behavior. Triggers on "ViewComponent", "partial", "Turbo Frame", "Turbo Stream", "Stimulus controller", or any change to app/components/ or app/views/. Always invoke before adding a new partial or component.
+paths:
+  - "app/components/**"
+  - "app/views/**"
 ---
 
 # Rails View Layer Conventions (ViewComponent + Hotwire)

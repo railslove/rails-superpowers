@@ -1,6 +1,8 @@
 ---
 name: rails-rspec-testing
 description: Use when writing or reviewing RSpec specs, choosing between request/system/unit specs, mocking a dependency, testing a private method, or dealing with a flaky or time-dependent test. Triggers on "RSpec", "flaky test", "spec fails intermittently", "mock", "stub", "Timecop", "travel_to", "send", "private method", or any file under spec/. Always invoke before writing a new spec file.
+paths:
+  - "spec/**"
 ---
 
 # Rails RSpec Conventions
